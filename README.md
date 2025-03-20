@@ -12,7 +12,7 @@ A Slack bot that posts NCAA tournament score updates as games complete.
 
 ## Prerequisites
 
-- Node.js (v14+)
+- Node.js (v14+) or Docker
 - Slack workspace with permission to add apps
 - Sports data API access (examples: SportRadar, ESPN, SportsData.io)
 
@@ -25,19 +25,13 @@ git clone https://github.com/mcorpening85/ncaa-tournament-slack-bot.git
 cd ncaa-tournament-slack-bot
 ```
 
-### 2. Install dependencies
-
-```bash
-npm install
-```
-
-### 3. Create a Slack App
+### 2. Create a Slack App
 
 1. Go to [api.slack.com/apps](https://api.slack.com/apps) and click "Create New App"
 2. Choose "From scratch" and provide a name (e.g., "NCAA Tournament Updates")
 3. Select your workspace
 
-### 4. Configure the Slack App
+### 3. Configure the Slack App
 
 1. Go to "OAuth & Permissions" in the sidebar
 2. Under "Scopes," add these Bot Token Scopes:
@@ -46,13 +40,13 @@ npm install
 3. Click "Install to Workspace" and authorize the app
 4. Copy the "Bot User OAuth Token" (starts with `xoxb-`)
 
-### 5. Get the Slack Channel ID
+### 4. Get the Slack Channel ID
 
 1. In Slack, right-click on the channel you want to post updates to
 2. Select "Copy link"
 3. The channel ID is the part after the last `/` in the URL (e.g., `C12345678`)
 
-### 6. Get a Sports API Key
+### 5. Get a Sports API Key
 
 This example uses [SportsData.io](https://sportsdata.io/), but you can adapt it to any sports API:
 
@@ -60,7 +54,7 @@ This example uses [SportsData.io](https://sportsdata.io/), but you can adapt it 
 2. Subscribe to their NCAA Basketball API (they offer free tiers for development)
 3. Get your API key from your account dashboard
 
-### 7. Configure Environment Variables
+### 6. Configure Environment Variables
 
 1. Copy the example environment file:
    ```bash
@@ -79,21 +73,53 @@ This example uses [SportsData.io](https://sportsdata.io/), but you can adapt it 
 
 ## Running the Bot
 
-### Local Development
+### Option 1: Local Development
 
 ```bash
+# Install dependencies
+npm install
+
+# Run in development mode
 npm run dev
 ```
 
-### Production Deployment
-
-#### Option 1: Host on a server
+### Option 2: Docker
 
 ```bash
+# Build and start with Docker Compose
+docker-compose up -d
+
+# View logs
+docker-compose logs -f
+
+# Stop the container
+docker-compose down
+```
+
+Alternatively, you can build and run the Docker container manually:
+
+```bash
+# Build the Docker image
+docker build -t ncaa-tournament-bot .
+
+# Run the container
+docker run -d --name ncaa-bot --env-file .env ncaa-tournament-bot
+
+# View logs
+docker logs -f ncaa-bot
+```
+
+### Option 3: Server Deployment
+
+```bash
+# Install dependencies
+npm install
+
+# Start the production server
 npm start
 ```
 
-#### Option 2: Deploy to Heroku
+### Option 4: Deploy to Heroku
 
 1. Install the [Heroku CLI](https://devcenter.heroku.com/articles/heroku-cli)
 2. Login and create an app:
@@ -115,7 +141,7 @@ npm start
    git push heroku main
    ```
 
-#### Option 3: Deploy to Vercel or similar platforms
+### Option 5: Deploy to Vercel or similar platforms
 
 Follow their standard Node.js deployment procedures and set environment variables in their dashboard.
 
@@ -131,7 +157,11 @@ Edit the `NOTIFICATION_THRESHOLD` value in the `.env` file (in points).
 
 ### Modify Message Format
 
-Edit the `formatGameMessage` function in `index.js` to change the appearance of Slack messages.
+Edit the message formatters in the `util/formatters.js` file to change the appearance of Slack messages.
+
+## Data Storage
+
+When running with Docker, the bot creates a volume mount for the `/app/data` directory, which can be used for persistent storage of game state data.
 
 ## License
 
